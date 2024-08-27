@@ -1,5 +1,7 @@
 package com.mordonia.mordoniasupport.commands;
 
+import com.mordonia.mcore.MCore;
+import com.mordonia.mcore.MCoreAPI;
 import com.mordonia.mcore.data.palyerdata.MPlayerManager;
 import com.mordonia.mordoniasupport.data.HelpData;
 import com.mordonia.mordoniasupport.util.Lang;
@@ -26,11 +28,11 @@ public class Commands implements CommandExecutor {
 
     private HelpData helpData;
     private TicketDataManager ticketDataManager;
-    private MPlayerManager playerManager;
+    private MCoreAPI mCoreAPI;
 
-    public Commands(TicketDataManager ticketDataManager, MPlayerManager playerManager, HelpData helpData) {
+    public Commands(TicketDataManager ticketDataManager, MCoreAPI mCoreAPI, HelpData helpData) {
 
-        this.playerManager = playerManager;
+        this.mCoreAPI = mCoreAPI;
         this.ticketDataManager = ticketDataManager;
         this.helpData = helpData;
 
@@ -45,7 +47,7 @@ public class Commands implements CommandExecutor {
                     sender.sendMessage(Lang.TITLE + " /support [issue]");
                     return false;
                 }
-                sender.sendMessage(Lang.TITLE + " /support [issue] \n /support check \n /suppoer open [id] \n /support close [id]");
+                sender.sendMessage(Lang.TITLE + " /support [issue] \n /support check \n /support open [id] \n /support close [id]");
                 return false;
             }
             String subcommand = args[0];
@@ -64,7 +66,10 @@ public class Commands implements CommandExecutor {
                     }
 
                     UUID uuid = user.getUniqueId();
-                    String name = playerManager.getPlayerMap().get(user).getmName().getFirstname() + " " + playerManager.getPlayerMap().get(user).getmName().getLastname();
+
+                    String firstName = mCoreAPI.getmPlayerManager().getPlayerMap().get(uuid.toString()).getmName().getFirstname();
+                    String lastName = mCoreAPI.getmPlayerManager().getPlayerMap().get(uuid.toString()).getmName().getLastname();
+                    String name =  firstName + " " + lastName;
 
                     TicketData ticket = new TicketData(id, uuid, issue, status, null, name);
 
@@ -114,6 +119,9 @@ public class Commands implements CommandExecutor {
                     helpData.enableDialogue(openIDInt, target);
                     helpData.enableDialogue(openIDInt, user);
 
+                    mCoreAPI.getmPlayerManager().getPlayerMap().get(user.getUniqueId().toString()).setInTicket(true);
+                    mCoreAPI.getmPlayerManager().getPlayerMap().get(target.getUniqueId().toString()).setInTicket(true);
+
                     target.sendMessage(Lang.TITLE + " " + ChatColor.GOLD + user.getDisplayName() + ChatColor.BLUE + " has opened your ticket, you are now in a helper dialogue!");
                     user.sendMessage(Lang.TITLE + " " + ChatColor.BLUE + "You successfully opened the ticket!");
 
@@ -122,7 +130,7 @@ public class Commands implements CommandExecutor {
                 case ("check"):
 
                     if (!sender.hasPermission("ms.open")) {
-                        sender.sendMessage(ChatColor.DARK_RED + "You don't have enough permission to use this command!");
+                        sender.sendMessage(ChatColor.RED + " You don't have enough permission to use this command!");
                         break;
                     }
 
@@ -168,28 +176,28 @@ public class Commands implements CommandExecutor {
                     break;
                 case ("close"):
                     if (!sender.hasPermission("ms.open")) {
-                        sender.sendMessage(Lang.TITLE + ChatColor.DARK_RED + "You don't have permission to run this command!");
+                        sender.sendMessage(Lang.TITLE + ChatColor.RED + " You don't have permission to run this command!");
                         break;
                     }
                     if (args.length < 2) {
-                        sender.sendMessage(Lang.TITLE + ChatColor.DARK_RED + "Invalid usage!");
+                        sender.sendMessage(Lang.TITLE + ChatColor.RED + " Invalid usage!");
                     }
 
                     String closeIDStr = args[1];
                     int closeID = Integer.valueOf(closeIDStr);
                     if (!ticketDataManager.dataMap.containsKey(closeID)) {
-                        sender.sendMessage(Lang.TITLE + ChatColor.DARK_RED + " Ticket not found!");
+                        sender.sendMessage(Lang.TITLE + ChatColor.RED + " Ticket not found!");
                         break;
                     }
                     Player p = Bukkit.getPlayer(ticketDataManager.dataMap.get(closeID).getPlayer());
                     Player s = Bukkit.getPlayer(ticketDataManager.dataMap.get(closeID).getStaff());
                     if(s != null){
                         s.sendMessage(Lang.TITLE + ChatColor.DARK_GREEN + " You closed the ticket successfully!");
-                        //playerManager.get(s).setTicket(false);
+                        mCoreAPI.getmPlayerManager().getPlayerMap().get(s.getUniqueId().toString()).setInTicket(false);
                     }
                     if(p != null){
                         p.sendMessage(Lang.TITLE + ChatColor.DARK_GREEN +  " Your ticket has been closed!");
-                        //playerManager.get(p).setTicket(false);
+                        mCoreAPI.getmPlayerManager().getPlayerMap().get(p.getUniqueId().toString()).setInTicket(false);
                     }
                     if(helpData.dialogueMap.containsKey(closeID)){
 
@@ -200,8 +208,6 @@ public class Commands implements CommandExecutor {
                     }
 
                     ticketDataManager.deleteTicket(closeID);
-
-                    sender.sendMessage(Lang.TITLE + ChatColor.DARK_GREEN + " You closed the ticket successfully!");
 
                     return false;
             }

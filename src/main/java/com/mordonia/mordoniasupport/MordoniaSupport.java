@@ -22,9 +22,9 @@ public final class MordoniaSupport extends JavaPlugin {
         getConfig().options().copyDefaults();
         saveDefaultConfig();
 
-        getCommand("support").setExecutor(new Commands(ticketDataManager, mCoreAPI.getmPlayerManager(), helpData));
+        getCommand("support").setExecutor(new Commands(ticketDataManager, mCoreAPI, helpData));
 
-        getServer().getPluginManager().registerEvents(new HelperDIalogue(ticketDataManager, helpData, mCoreAPI.getmPlayerManager()), this);
+        getServer().getPluginManager().registerEvents(new HelperDIalogue(ticketDataManager, helpData, mCoreAPI), this);
         getServer().getPluginManager().registerEvents(new ConnectionListener(ticketDataManager, helpData), this);
 
     }

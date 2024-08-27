@@ -16,20 +16,36 @@ public class TicketDataManager {
 
     public void loadTickets() {
 
-        for(String key: config.getConfigurationSection("tickets").getKeys(false)){
+        try {
 
-            TicketData ticket = new TicketData(
-                    Integer.parseInt(key),
-                    (UUID) config.get("tickets." + key + ".player"),
-                    config.get("tickets." + key + ".issue").toString(),
-                    config.get("tickets." + key + ".status").toString(),
-                    (UUID) config.get("tickets." + key + ".staff"),
-                    config.get("tickets." + key + ".name").toString()
-                    );
+            for (String key : config.getConfigurationSection("tickets").getKeys(false)) {
 
-            ticket.setPlayer((UUID) config.get("tickets." + key + ".player"));
+                TicketData ticket = new TicketData(
+                        Integer.parseInt(key),
+                        UUID.fromString(String.valueOf(config.get("tickets." + key + ".player"))),
+                        config.get("tickets." + key + ".issue").toString(),
+                        config.get("tickets." + key + ".status").toString(),
+                        null,
+                        config.get("tickets." + key + ".name").toString()
+                );
 
-            dataMap.put(Integer.parseInt(key), ticket);
+                if(config.get("tickets." + key + ".staff") != null){
+
+                    ticket.setStaff(UUID.fromString(String.valueOf(config.get("tickets." + key + ".staff"))));
+
+                }
+
+                if(!dataMap.containsKey(Integer.parseInt(key))){
+
+                    dataMap.put(Integer.parseInt(key), ticket);
+
+                }
+
+            }
+
+        } catch(NullPointerException e){
+
+            return;
 
         }
 
@@ -37,19 +53,30 @@ public class TicketDataManager {
 
     public void saveTicket(TicketData ticket){
 
-        Integer id = ticket.getId();
+        try {
 
-        config.set("tickets." + id, null);
+            Integer id = ticket.getId();
 
-        config.set("tickets." + id + ".player", ticket.getPlayer().toString());
-        config.set("tickets." + id + ".name", ticket.getName());
-        config.set("tickets." + id + ".status", ticket.getStatus());
-        config.set("tickets." + id + ".issue", ticket.getIssue());
-        config.set("tickets." + id + ".staff", ticket.getStaff().toString());
+            config.set("tickets." + id, null);
 
-        dataMap.put(ticket.getId(), ticket);
+            config.set("tickets." + id + ".player", ticket.getPlayer().toString());
+            config.set("tickets." + id + ".name", ticket.getName());
+            config.set("tickets." + id + ".status", ticket.getStatus());
+            config.set("tickets." + id + ".issue", ticket.getIssue());
 
-        plugin.saveConfig();
+            if(ticket.getStaff() != null) {
+                config.set("tickets." + id + ".staff", ticket.getStaff().toString());
+            }
+
+            dataMap.put(ticket.getId(), ticket);
+
+            plugin.saveConfig();
+
+        } catch (NullPointerException e){
+
+            return;
+
+        }
 
     }
 

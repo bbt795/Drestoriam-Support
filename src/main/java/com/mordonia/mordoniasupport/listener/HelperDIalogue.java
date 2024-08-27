@@ -1,5 +1,6 @@
 package com.mordonia.mordoniasupport.listener;
 
+import com.mordonia.mcore.MCoreAPI;
 import com.mordonia.mcore.data.palyerdata.MPlayerManager;
 import com.mordonia.mordoniasupport.data.HelpData;
 import java.util.ArrayList;
@@ -14,19 +15,19 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 public class HelperDIalogue implements Listener {
     private TicketDataManager ticketDataManager;
     private HelpData helpData;
-    private MPlayerManager playerManager;
+    private MCoreAPI mCoreAPI;
 
-    public HelperDIalogue(TicketDataManager ticketDataManager, HelpData helpData, MPlayerManager playerManager) {
+    public HelperDIalogue(TicketDataManager ticketDataManager, HelpData helpData, MCoreAPI mCoreAPI) {
         this.ticketDataManager = ticketDataManager;
         this.helpData = helpData;
-        this.playerManager = playerManager;
+        this.mCoreAPI = mCoreAPI;
     }
 
     @EventHandler
     public void onHelperDialogue(AsyncPlayerChatEvent event) {
         Player p = event.getPlayer();
-        String firstname = this.playerManager.getPlayerMap().get(p).getmName().getFirstname();
-        String lastname = this.playerManager.getPlayerMap().get(p).getmName().getLastname();
+        String firstname = this.mCoreAPI.getmPlayerManager().getPlayerMap().get(p.getUniqueId().toString()).getmName().getFirstname();
+        String lastname = this.mCoreAPI.getmPlayerManager().getPlayerMap().get(p.getUniqueId().toString()).getmName().getLastname();
         String name = firstname + " " + lastname;
         event.setCancelled(true);
 
