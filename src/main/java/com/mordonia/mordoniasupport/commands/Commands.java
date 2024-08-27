@@ -1,25 +1,21 @@
 package com.mordonia.mordoniasupport.commands;
 
-import com.mordonia.mcore.MySQLConnection;
-import com.mordonia.mcore.mchat.util.playerData.PlayerChatDataManager;
-import com.mordonia.mcore.ms.util.TicketData;
-import com.mordonia.mcore.ms.util.TicketDataManager;
-import com.mordonia.mordoniasupport.data.DeleteTicket;
+import com.mordonia.mcore.data.palyerdata.MPlayerManager;
 import com.mordonia.mordoniasupport.data.HelpData;
-import com.mordonia.mordoniasupport.data.TicketSave;
 import com.mordonia.mordoniasupport.util.Lang;
+import com.mordonia.mordoniasupport.util.TicketData;
+import com.mordonia.mordoniasupport.util.TicketDataManager;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.HoverEvent.Action;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import sun.jvm.hotspot.utilities.LivenessAnalysis;
 
 
 import java.util.UUID;
@@ -27,22 +23,17 @@ import java.util.UUID;
 import static net.md_5.bungee.api.ChatColor.*;
 
 public class Commands implements CommandExecutor {
-    private TicketDataManager ticketDataManager;
-    private PlayerChatDataManager playerChatDataManager;
-    private MySQLConnection connection;
-    private OfflinePlayer p;
-    private String name;
-    private HelpData helpData;
-    private DeleteTicket deleteTicket;
-    private TicketSave ticketSave;
 
-    public Commands(TicketDataManager ticketDataManager, PlayerChatDataManager playerChatDataManager, MySQLConnection connection, HelpData helpData, DeleteTicket deleteTicket, TicketSave ticketSave) {
-        this.playerChatDataManager = playerChatDataManager;
+    private HelpData helpData;
+    private TicketDataManager ticketDataManager;
+    private MPlayerManager playerManager;
+
+    public Commands(TicketDataManager ticketDataManager, MPlayerManager playerManager, HelpData helpData) {
+
+        this.playerManager = playerManager;
         this.ticketDataManager = ticketDataManager;
-        this.connection = connection;
         this.helpData = helpData;
-        this.deleteTicket = deleteTicket;
-        this.ticketSave = ticketSave;
+
     }
 
     @Override
@@ -63,6 +54,7 @@ public class Commands implements CommandExecutor {
                     String status = "[Pending]";
                     String issue = " ";
                     int id = 0;
+
                     while (ticketDataManager.dataMap.containsKey(id)) {
                         id++;
                     }
@@ -70,10 +62,13 @@ public class Commands implements CommandExecutor {
                         String arg = args[i] + " ";
                         issue = issue + arg;
                     }
+
                     UUID uuid = user.getUniqueId();
-                    String name = playerChatDataManager.get(user).getFirstname() + " " + playerChatDataManager.get(user).getLastname();
-                    ticketDataManager.dataMap.put(id, new TicketData(id, uuid, issue, status, null, name));
-                    ticketSave.saveFiles(id, uuid, name, issue, status);
+                    String name = playerManager.getPlayerMap().get(user).getmName().getFirstname() + " " + playerManager.getPlayerMap().get(user).getmName().getLastname();
+
+                    TicketData ticket = new TicketData(id, uuid, issue, status, null, name);
+
+                    ticketDataManager.saveTicket(ticket);
 
                     sender.sendMessage(Lang.TITLE + ChatColor.BLUE + " You have created a new support ticket! A staff member will answer it shortly!");
                     for (Player staff : Bukkit.getServer().getOnlinePlayers()) {
@@ -82,6 +77,7 @@ public class Commands implements CommandExecutor {
                         }
                     }
                     break;
+
                 case ("open"):
                     if (!sender.hasPermission("ms.open")) {
                         sender.sendMessage(Lang.TITLE + " " + ChatColor.DARK_RED + "You don't have enough permission to run this command!");
@@ -107,43 +103,55 @@ public class Commands implements CommandExecutor {
                         sender.sendMessage(Lang.TITLE + ChatColor.RED + "The player was not found!");
                         break;
                     }
-                    ticketDataManager.dataMap.get(openIDInt).setStaff(user.getUniqueId());
-                    ticketDataManager.dataMap.get(openIDInt).setStatus("[Open]");
+
+                    TicketData openedTicket = ticketDataManager.dataMap.get(openIDInt);
+
+                    openedTicket.setStaff(user.getUniqueId());
+                    openedTicket.setStatus("[Open]");
+
+                    ticketDataManager.saveTicket(openedTicket);
+
                     helpData.enableDialogue(openIDInt, target);
                     helpData.enableDialogue(openIDInt, user);
-                    playerChatDataManager.get(user).setTicket(true);
-                    playerChatDataManager.get(target).setTicket(true);
 
                     target.sendMessage(Lang.TITLE + " " + ChatColor.GOLD + user.getDisplayName() + ChatColor.BLUE + " has opened your ticket, you are now in a helper dialogue!");
                     user.sendMessage(Lang.TITLE + " " + ChatColor.BLUE + "You successfully opened the ticket!");
+
                     break;
+
                 case ("check"):
+
                     if (!sender.hasPermission("ms.open")) {
                         sender.sendMessage(ChatColor.DARK_RED + "You don't have enough permission to use this command!");
                         break;
                     }
+
+                    ticketDataManager.loadTickets();
+
                     if(ticketDataManager.dataMap.isEmpty()){
                         sender.sendMessage(Lang.TITLE + ChatColor.BLUE + " There are no tickets pending!");
                     }
+
                     int z = 0;
                     while (z < ticketDataManager.dataMap.size()) {
+
                         for (int idCh : ticketDataManager.dataMap.keySet()) {
                             String statusCh = ticketDataManager.dataMap.get(idCh).getStatus();
                             String issueCh = ticketDataManager.dataMap.get(idCh).getIssue();
                             String pName = ChatColor.stripColor(ticketDataManager.dataMap.get(idCh).getName());
                             TextComponent plName = new TextComponent(pName);
-                            TextComponent tickeyStatus = new TextComponent(statusCh + " ");
+                            TextComponent ticketStatus = new TextComponent(statusCh + " ");
                             TextComponent ticketIssue = new TextComponent(issueCh);
-                            TextComponent ticketID = new TextComponent(String.valueOf(idCh) + " ");
+                            TextComponent ticketID = new TextComponent(idCh + " ");
 
                             ticketID.setColor(DARK_AQUA);
 
                             if (statusCh.equalsIgnoreCase("[Open]")) {
-                                tickeyStatus.setColor(DARK_GREEN);
-                                tickeyStatus.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + "A staff member is currently in this ticket!").create()));
+                                ticketStatus.setColor(DARK_GREEN);
+                                ticketStatus.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + "A staff member is currently in this ticket!").create()));
                             } else {
-                                tickeyStatus.setColor(DARK_RED);
-                                tickeyStatus.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + "No one has answered this ticket yet!").create()));
+                                ticketStatus.setColor(DARK_RED);
+                                ticketStatus.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + "No one has answered this ticket yet!").create()));
 
                             }
                             Player o = Bukkit.getPlayer(ticketDataManager.dataMap.get(idCh).getPlayer());
@@ -153,7 +161,7 @@ public class Commands implements CommandExecutor {
                                 plName.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new ComponentBuilder(ChatColor.DARK_GREEN + "[Online]\n" + o.getDisplayName()).create()));
                             }
 
-                            sender.spigot().sendMessage(ticketID, tickeyStatus, plName, ticketIssue);
+                            sender.spigot().sendMessage(ticketID, ticketStatus, plName, ticketIssue);
                             z++;
                         }
                     }
@@ -177,22 +185,23 @@ public class Commands implements CommandExecutor {
                     Player s = Bukkit.getPlayer(ticketDataManager.dataMap.get(closeID).getStaff());
                     if(s != null){
                         s.sendMessage(Lang.TITLE + ChatColor.DARK_GREEN + " You closed the ticket successfully!");
-                        playerChatDataManager.get(s).setTicket(false);
+                        //playerManager.get(s).setTicket(false);
                     }
                     if(p != null){
                         p.sendMessage(Lang.TITLE + ChatColor.DARK_GREEN +  " Your ticket has been closed!");
-                        playerChatDataManager.get(p).setTicket(false);
+                        //playerManager.get(p).setTicket(false);
                     }
                     if(helpData.dialogueMap.containsKey(closeID)){
+
                         helpData.dialogueMap.get(closeID).remove(p);
                         helpData.dialogueMap.get(closeID).remove(s);
                         helpData.dialogueMap.remove(closeID);
 
                     }
-                    ticketDataManager.dataMap.remove(closeID);
-                    deleteTicket.deleteTickets(closeID);
-                    sender.sendMessage(Lang.TITLE + ChatColor.DARK_GREEN + " You closed the ticket successfully!");
 
+                    ticketDataManager.deleteTicket(closeID);
+
+                    sender.sendMessage(Lang.TITLE + ChatColor.DARK_GREEN + " You closed the ticket successfully!");
 
                     return false;
             }

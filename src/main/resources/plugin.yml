@@ -1,8 +1,9 @@
 name: MordoniaSupport
 version: ${project.version}
 main: com.mordonia.mordoniasupport.MordoniaSupport
-api-version: 1.13
-authors: [AlexxSGames]
+api-version: 1.21.1
+author: AlexxSGames
+authors: [billbominecraft]
 description: A support plugin for Mordonia!
 website: mordoniamc.com
 depend: [MCore]

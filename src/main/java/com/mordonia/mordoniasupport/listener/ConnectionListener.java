@@ -1,13 +1,11 @@
 package com.mordonia.mordoniasupport.listener;
 
-import com.mordonia.mcore.MySQLConnection;
-import com.mordonia.mcore.mchat.util.playerData.PlayerChatDataManager;
-import com.mordonia.mcore.ms.util.TicketDataManager;
 import com.mordonia.mordoniasupport.MordoniaSupport;
 import com.mordonia.mordoniasupport.data.HelpData;
 import com.mordonia.mordoniasupport.util.Lang;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import com.mordonia.mordoniasupport.util.TicketData;
+import com.mordonia.mordoniasupport.util.TicketDataManager;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,21 +14,14 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
 public class ConnectionListener implements Listener {
     private TicketDataManager ticketDataManager;
     private HelpData helpData;
-    private MySQLConnection connection;
-    private PlayerChatDataManager playerChatDataManager;
     private JavaPlugin plugin = MordoniaSupport.getProvidingPlugin(MordoniaSupport.class);
 
-    public ConnectionListener(TicketDataManager ticketDataManager, HelpData helpData, MySQLConnection connection, PlayerChatDataManager playerChatDataManager){
+    public ConnectionListener(TicketDataManager ticketDataManager, HelpData helpData){
         this.ticketDataManager = ticketDataManager;
         this.helpData = helpData;
-        this.connection = connection;
-        this.playerChatDataManager = playerChatDataManager;
     }
 
     @EventHandler
@@ -55,17 +46,25 @@ public class ConnectionListener implements Listener {
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event){
-        Player u = event.getPlayer();
+
         if(helpData.playerMap.isEmpty() || helpData.dialogueMap.isEmpty()) return;
+
         if(helpData.playerMap.containsKey(event.getPlayer())){
+
             int id = helpData.playerMap.get(event.getPlayer());
             helpData.dialogueMap.remove(id);
             helpData.playerMap.remove(event.getPlayer());
-            ticketDataManager.dataMap.get(id).setStatus("[Pending]");
+
+            TicketData ticket = ticketDataManager.dataMap.get(id);
+            ticket.setStatus("[Pending]");
+            ticketDataManager.saveTicket(ticket);
+
+            /*
             Player user = Bukkit.getPlayer(ticketDataManager.dataMap.get(id).getPlayer());
             Player staff = Bukkit.getPlayer(ticketDataManager.dataMap.get(id).getStaff());
-            playerChatDataManager.get(user).setTicket(false);
-            playerChatDataManager.get(staff).setTicket(false);
+            playerManager.getPlayerMap().get(user).setTicket(false);
+            playerManager.getPlayerMap().get(staff).setTicket(false);
+            */
         }
     }
 }

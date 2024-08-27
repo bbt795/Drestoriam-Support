@@ -9,8 +9,6 @@ public class HelpData {
     public HashMap<Integer, ArrayList<Player>> dialogueMap = new HashMap<>();
     public HashMap<Player, Integer> playerMap = new HashMap<>();
 
-
-
     public void enableDialogue(Integer dialogueID, Player player){
         ArrayList<Player> players = dialogueMap.get(dialogueID);
 
