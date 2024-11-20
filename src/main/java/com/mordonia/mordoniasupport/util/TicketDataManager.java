@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class TicketDataManager {
 
-    public HashMap<Integer, TicketData> dataMap = new HashMap();
+    public HashMap<Integer, TicketData> dataMap = new HashMap<>();
     private Plugin plugin = MordoniaSupport.getPlugin(MordoniaSupport.class);
     public FileConfiguration config = plugin.getConfig();
 

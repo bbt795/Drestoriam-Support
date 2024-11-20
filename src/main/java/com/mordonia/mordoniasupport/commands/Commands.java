@@ -1,8 +1,6 @@
 package com.mordonia.mordoniasupport.commands;
 
-import com.mordonia.mcore.MCore;
 import com.mordonia.mcore.MCoreAPI;
-import com.mordonia.mcore.data.palyerdata.MPlayerManager;
 import com.mordonia.mordoniasupport.data.HelpData;
 import com.mordonia.mordoniasupport.util.Lang;
 import com.mordonia.mordoniasupport.util.TicketData;
@@ -13,7 +11,6 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.HoverEvent.Action;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -181,16 +178,19 @@ public class Commands implements CommandExecutor {
                     }
                     if (args.length < 2) {
                         sender.sendMessage(Lang.TITLE + ChatColor.RED + " Invalid usage!");
+                        break;
                     }
 
                     String closeIDStr = args[1];
-                    int closeID = Integer.valueOf(closeIDStr);
+                    int closeID = Integer.parseInt(closeIDStr);
                     if (!ticketDataManager.dataMap.containsKey(closeID)) {
                         sender.sendMessage(Lang.TITLE + ChatColor.RED + " Ticket not found!");
                         break;
                     }
+
                     Player p = Bukkit.getPlayer(ticketDataManager.dataMap.get(closeID).getPlayer());
                     Player s = Bukkit.getPlayer(ticketDataManager.dataMap.get(closeID).getStaff());
+
                     if(s != null){
                         s.sendMessage(Lang.TITLE + ChatColor.DARK_GREEN + " You closed the ticket successfully!");
                         mCoreAPI.getmPlayerManager().getPlayerMap().get(s.getUniqueId().toString()).setInTicket(false);
