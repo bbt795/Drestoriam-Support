@@ -3,7 +3,7 @@
 // (powered by FernFlower decompiler)
 //
 
-package com.mordonia.mordoniasupport.util;
+package com.drestoriam.drestoriamsupport.util;
 
 import java.util.UUID;
 

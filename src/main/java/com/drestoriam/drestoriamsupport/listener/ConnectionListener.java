@@ -1,10 +1,10 @@
-package com.mordonia.mordoniasupport.listener;
+package com.drestoriam.drestoriamsupport.listener;
 
-import com.mordonia.mordoniasupport.MordoniaSupport;
-import com.mordonia.mordoniasupport.data.HelpData;
-import com.mordonia.mordoniasupport.util.Lang;
-import com.mordonia.mordoniasupport.util.TicketData;
-import com.mordonia.mordoniasupport.util.TicketDataManager;
+import com.drestoriam.drestoriamsupport.DrestoriamSupport;
+import com.drestoriam.drestoriamsupport.data.HelpData;
+import com.drestoriam.drestoriamsupport.util.Lang;
+import com.drestoriam.drestoriamsupport.util.TicketData;
+import com.drestoriam.drestoriamsupport.util.TicketDataManager;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,7 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class ConnectionListener implements Listener {
     private TicketDataManager ticketDataManager;
     private HelpData helpData;
-    private JavaPlugin plugin = MordoniaSupport.getProvidingPlugin(MordoniaSupport.class);
+    private JavaPlugin plugin = DrestoriamSupport.getProvidingPlugin(DrestoriamSupport.class);
 
     public ConnectionListener(TicketDataManager ticketDataManager, HelpData helpData){
         this.ticketDataManager = ticketDataManager;

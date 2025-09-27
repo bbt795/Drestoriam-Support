@@ -1,11 +1,9 @@
-name: MordoniaSupport
+name: DrestoriamSupport
 version: ${project.version}
-main: com.mordonia.mordoniasupport.MordoniaSupport
+main: com.drestoriam.drestoriamsupport.DrestoriamSupport
 api-version: 1.21.1
-author: AlexxSGames
-authors: [billbominecraft]
-description: A support plugin for Mordonia!
-website: mordoniamc.com
+authors: [AlexxSGames, billbominecraft]
+description: A support plugin for Drestoriam!
 depend: [MCore]
 commands:
   support:

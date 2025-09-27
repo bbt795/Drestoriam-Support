@@ -1,4 +1,4 @@
-package com.mordonia.mordoniasupport.util;
+package com.drestoriam.drestoriamsupport.util;
 
 import net.md_5.bungee.api.ChatColor;
 

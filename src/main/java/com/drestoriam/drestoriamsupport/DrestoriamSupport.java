@@ -1,15 +1,15 @@
-package com.mordonia.mordoniasupport;
+package com.drestoriam.drestoriamsupport;
 import com.mordonia.mcore.MCore;
 
 import com.mordonia.mcore.MCoreAPI;
-import com.mordonia.mordoniasupport.commands.Commands;
-import com.mordonia.mordoniasupport.data.HelpData;
-import com.mordonia.mordoniasupport.listener.ConnectionListener;
-import com.mordonia.mordoniasupport.listener.HelperDIalogue;
-import com.mordonia.mordoniasupport.util.TicketDataManager;
+import com.drestoriam.drestoriamsupport.commands.Commands;
+import com.drestoriam.drestoriamsupport.data.HelpData;
+import com.drestoriam.drestoriamsupport.listener.ConnectionListener;
+import com.drestoriam.drestoriamsupport.listener.HelperDIalogue;
+import com.drestoriam.drestoriamsupport.util.TicketDataManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class MordoniaSupport extends JavaPlugin {
+public final class DrestoriamSupport extends JavaPlugin {
 
     @Override
     public void onEnable() {

@@ -1,6 +1,6 @@
-package com.mordonia.mordoniasupport.util;
+package com.drestoriam.drestoriamsupport.util;
 
-import com.mordonia.mordoniasupport.MordoniaSupport;
+import com.drestoriam.drestoriamsupport.DrestoriamSupport;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -10,7 +10,7 @@ import java.util.UUID;
 public class TicketDataManager {
 
     public HashMap<Integer, TicketData> dataMap = new HashMap<>();
-    private Plugin plugin = MordoniaSupport.getPlugin(MordoniaSupport.class);
+    private Plugin plugin = DrestoriamSupport.getPlugin(DrestoriamSupport.class);
     public FileConfiguration config = plugin.getConfig();
 
 

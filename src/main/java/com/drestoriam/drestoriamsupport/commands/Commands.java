@@ -1,10 +1,10 @@
-package com.mordonia.mordoniasupport.commands;
+package com.drestoriam.drestoriamsupport.commands;
 
 import com.mordonia.mcore.MCoreAPI;
-import com.mordonia.mordoniasupport.data.HelpData;
-import com.mordonia.mordoniasupport.util.Lang;
-import com.mordonia.mordoniasupport.util.TicketData;
-import com.mordonia.mordoniasupport.util.TicketDataManager;
+import com.drestoriam.drestoriamsupport.data.HelpData;
+import com.drestoriam.drestoriamsupport.util.Lang;
+import com.drestoriam.drestoriamsupport.util.TicketData;
+import com.drestoriam.drestoriamsupport.util.TicketDataManager;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;

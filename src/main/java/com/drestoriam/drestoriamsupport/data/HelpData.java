@@ -1,4 +1,4 @@
-package com.mordonia.mordoniasupport.data;
+package com.drestoriam.drestoriamsupport.data;
 
 import org.bukkit.entity.Player;
 

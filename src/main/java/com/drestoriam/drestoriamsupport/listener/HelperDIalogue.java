@@ -1,10 +1,10 @@
-package com.mordonia.mordoniasupport.listener;
+package com.drestoriam.drestoriamsupport.listener;
 
 import com.mordonia.mcore.MCoreAPI;
-import com.mordonia.mordoniasupport.data.HelpData;
+import com.drestoriam.drestoriamsupport.data.HelpData;
 import java.util.ArrayList;
 
-import com.mordonia.mordoniasupport.util.TicketDataManager;
+import com.drestoriam.drestoriamsupport.util.TicketDataManager;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
