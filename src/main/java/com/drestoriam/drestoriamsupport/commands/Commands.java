@@ -68,14 +68,14 @@ public class Commands implements CommandExecutor {
                     String lastName = mCoreAPI.getmPlayerManager().getPlayerMap().get(uuid.toString()).getmName().getLastname();
                     String name =  firstName + " " + lastName;
 
-                    TicketData ticket = new TicketData(id, uuid, issue, status, null, name);
+                    TicketData ticket = new TicketData(id, uuid, issue, status, UUID.fromString("00000000-0000-0000-0000-000000000000"), name);
 
                     ticketDataManager.saveTicket(ticket);
 
                     sender.sendMessage(Lang.TITLE + ChatColor.BLUE + " You have created a new support ticket! A staff member will answer it shortly!");
                     for (Player staff : Bukkit.getServer().getOnlinePlayers()) {
                         if (staff.hasPermission("ms.open")) {
-                            staff.sendMessage(Lang.TITLE + ChatColor.GOLD + ((Player) sender).getDisplayName() + ChatColor.BLUE + " has created a new support ticket! Use /support check to see it.");
+                            staff.sendMessage(Lang.TITLE + ChatColor.GOLD + " " + ((Player) sender).getDisplayName() + ChatColor.BLUE + " has created a new support ticket! Use /support check to see it.");
                         }
                     }
                     break;
@@ -135,7 +135,10 @@ public class Commands implements CommandExecutor {
 
                     if(ticketDataManager.dataMap.isEmpty()){
                         sender.sendMessage(Lang.TITLE + ChatColor.BLUE + " There are no tickets pending!");
+                        break;
                     }
+
+                    sender.sendMessage(Lang.TITLE + ChatColor.BLUE + " -=+ Current Tickets +=-");
 
                     int z = 0;
                     while (z < ticketDataManager.dataMap.size()) {
@@ -144,7 +147,7 @@ public class Commands implements CommandExecutor {
                             String statusCh = ticketDataManager.dataMap.get(idCh).getStatus();
                             String issueCh = ticketDataManager.dataMap.get(idCh).getIssue();
                             String pName = ChatColor.stripColor(ticketDataManager.dataMap.get(idCh).getName());
-                            TextComponent plName = new TextComponent(pName);
+                            TextComponent plName = new TextComponent(pName + ":");
                             TextComponent ticketStatus = new TextComponent(statusCh + " ");
                             TextComponent ticketIssue = new TextComponent(issueCh);
                             TextComponent ticketID = new TextComponent(idCh + " ");
